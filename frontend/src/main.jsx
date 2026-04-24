@@ -14,6 +14,11 @@ import {
 import "./styles.css";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
+const EXAMPLE_QUESTIONS = [
+  "Top products by revenue",
+  "Revenue by category",
+  "Which products have the lowest revenue?",
+];
 
 function App() {
   const [question, setQuestion] = useState("");
@@ -34,15 +39,15 @@ function App() {
       }));
   }, [result]);
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  async function askQuestion(questionToAsk = question) {
+    const trimmedQuestion = questionToAsk.trim();
 
-    const trimmedQuestion = question.trim();
     if (!trimmedQuestion) {
       setError("Enter a question to analyze.");
       return;
     }
 
+    setQuestion(trimmedQuestion);
     setIsLoading(true);
     setError("");
 
@@ -68,13 +73,18 @@ function App() {
     }
   }
 
+  async function handleSubmit(event) {
+    event.preventDefault();
+    await askQuestion();
+  }
+
   return (
     <main className="app-shell">
       <section className="workspace">
         <header className="header">
           <div>
             <p className="eyebrow">BI Copilot</p>
-            <h1>Ask questions about sales data</h1>
+            <h1>Ask questions about e-commerce sales</h1>
           </div>
         </header>
 
@@ -90,13 +100,26 @@ function App() {
           </button>
         </form>
 
+        <div className="examples" aria-label="Example questions">
+          {EXAMPLE_QUESTIONS.map((example) => (
+            <button
+              key={example}
+              type="button"
+              onClick={() => askQuestion(example)}
+              disabled={isLoading}
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+
         {error && <p className="error">{error}</p>}
 
         {result && (
           <section className="results" aria-live="polite">
             <section className="insight-panel">
               <span>AI Insight</span>
-              <p>{result.insight}</p>
+              <p>{cleanInsight(result.insight)}</p>
             </section>
 
             <div className="sql-panel">
@@ -127,6 +150,8 @@ function App() {
             </div>
           </section>
         )}
+
+        <footer className="footer">Powered by Gemini, FastAPI, PostgreSQL, and Recharts.</footer>
       </section>
     </main>
   );
@@ -173,6 +198,14 @@ function formatLabel(value) {
     .split("_")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+function cleanInsight(value) {
+  return String(value || "")
+    .replace(/\*\*/g, "")
+    .replace(/^\s*[-*]\s+/gm, "")
+    .replace(/^\s*\d+\.\s+/gm, "")
+    .trim();
 }
 
 function DataTable({ rows }) {

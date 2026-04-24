@@ -37,7 +37,9 @@ def _build_insight_prompt(data: list[dict[str, Any]]) -> str:
 You are a senior BI analyst.
 Analyze the dataset and return concise, professional business insights.
 Focus on trends, anomalies, and useful next actions.
-Use 2-4 short bullet points.
+Use 2-4 short sentences.
+Return plain text only.
+Do not use markdown, bullets, asterisks, headings, or numbered lists.
 Do not mention technical implementation details.
 
 Dataset sample:

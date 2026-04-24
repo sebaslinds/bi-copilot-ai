@@ -75,7 +75,7 @@ h2 {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .ask-form input {
@@ -108,6 +108,33 @@ h2 {
 
 .ask-form button:disabled {
   background: #8aa8ef;
+  cursor: wait;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.examples button {
+  min-height: 36px;
+  border: 1px solid #d3d8e4;
+  border-radius: 8px;
+  padding: 0 12px;
+  color: #172033;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.examples button:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}
+
+.examples button:disabled {
+  color: #8a94a8;
   cursor: wait;
 }
 
@@ -235,6 +262,12 @@ td {
   color: #586174;
 }
 
+.footer {
+  margin-top: 22px;
+  color: #667085;
+  font-size: 0.86rem;
+}
+
 @media (max-width: 780px) {
   .app-shell {
     padding: 28px 14px;
@@ -251,5 +284,9 @@ td {
 
   .ask-form button {
     width: 100%;
+  }
+
+  .examples {
+    display: grid;
   }
 }
