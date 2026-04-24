@@ -10,6 +10,7 @@ class Settings:
     gemini_model: str
     database_url: str
     cors_origins: list[str]
+    cors_origin_regex: str | None
     app_name: str = "BI Copilot API"
 
 
@@ -29,4 +30,8 @@ def get_settings() -> Settings:
             for origin in cors_origins.split(",")
             if origin.strip()
         ],
+        cors_origin_regex=os.getenv(
+            "CORS_ORIGIN_REGEX",
+            r"https://.*\.vercel\.app",
+        ),
     )
