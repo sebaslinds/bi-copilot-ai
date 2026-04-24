@@ -26,6 +26,8 @@ Use a simple sales analytics schema unless the user provides more context:
 
 Revenue is calculated as price * quantity.
 When answering revenue questions, alias the calculated metric as revenue.
+Rows ingested by the ethical demo scraper use category = 'Scraped Demo'.
+When users ask for scraped demo products, filter with category = 'Scraped Demo', not product LIKE '%scraped demo%'.
 
 Question: {question}
 """.strip()

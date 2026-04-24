@@ -55,6 +55,26 @@ def test_run_query_accepts_select() -> None:
     assert {"product", "revenue"} <= set(rows[0])
 
 
+def test_run_query_normalizes_scraped_demo_product_filter(monkeypatch: pytest.MonkeyPatch) -> None:
+    client = TestClient(main.app)
+    monkeypatch.setattr(
+        "services.scraper_service.fetch_demo_products",
+        lambda: [
+            ScrapedProduct(name="Portfolio Product C", category="Scraped Demo", price=39.99),
+        ],
+    )
+    client.post("/ingestion/scrape-demo")
+
+    rows = run_query(
+        "SELECT product, price FROM sales "
+        "WHERE product LIKE '%scraped demo%' "
+        "ORDER BY price;"
+    )
+
+    assert rows
+    assert {"product", "price"} <= set(rows[0])
+
+
 @pytest.mark.parametrize(
     "sql",
     [

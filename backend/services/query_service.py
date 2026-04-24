@@ -68,6 +68,15 @@ def _limit_query(sql: str) -> str:
     return f"SELECT * FROM ({query}) AS limited_query LIMIT {MAX_RESULT_ROWS}"
 
 
+def _normalize_known_ai_sql(sql: str) -> str:
+    query = sql.strip()
+    scraped_product_filter = re.compile(
+        r"product\s+LIKE\s+'%scraped demo%'",
+        flags=re.IGNORECASE,
+    )
+    return scraped_product_filter.sub("category = 'Scraped Demo'", query)
+
+
 def _serialize_value(value: Any) -> Any:
     if isinstance(value, (date, datetime)):
         return value.isoformat()
@@ -85,6 +94,7 @@ def _rows_to_records(rows: list[Any]) -> list[dict[str, Any]]:
 
 def run_query(sql: str) -> list[dict[str, Any]]:
     """Execute read-only SQL against the configured database."""
+    sql = _normalize_known_ai_sql(sql)
     _validate_read_only_sql(sql)
     init_db()
 
