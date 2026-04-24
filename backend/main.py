@@ -1,4 +1,5 @@
 import logging
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -11,6 +12,7 @@ try:
     from schemas import AskRequest, AskResponse, HealthResponse
     from services.chart_service import suggest_chart
     from services.query_service import run_query
+    from services.seed_service import seed_database
 except ModuleNotFoundError:
     from backend.ai import generate_insight, generate_sql
     from backend.config import get_settings
@@ -18,11 +20,20 @@ except ModuleNotFoundError:
     from backend.schemas import AskRequest, AskResponse, HealthResponse
     from backend.services.chart_service import suggest_chart
     from backend.services.query_service import run_query
+    from backend.services.seed_service import seed_database
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 settings = get_settings()
-app = FastAPI(title=settings.app_name)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    seed_database(reset=False)
+    yield
+
+
+app = FastAPI(title=settings.app_name, lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
