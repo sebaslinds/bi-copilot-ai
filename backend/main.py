@@ -9,6 +9,7 @@ try:
     from ai import generate_insight, generate_sql
     from config import get_settings
     from errors import AppError
+    from routes.ingestion import router as ingestion_router
     from schemas import AskRequest, AskResponse, HealthResponse
     from services.chart_service import suggest_chart
     from services.query_service import run_query
@@ -17,6 +18,7 @@ except ModuleNotFoundError:
     from backend.ai import generate_insight, generate_sql
     from backend.config import get_settings
     from backend.errors import AppError
+    from backend.routes.ingestion import router as ingestion_router
     from backend.schemas import AskRequest, AskResponse, HealthResponse
     from backend.services.chart_service import suggest_chart
     from backend.services.query_service import run_query
@@ -34,6 +36,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title=settings.app_name, lifespan=lifespan)
+app.include_router(ingestion_router)
 
 app.add_middleware(
     CORSMiddleware,

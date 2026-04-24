@@ -46,6 +46,19 @@ Response:
 }
 ```
 
+`POST /ingestion/scrape-demo`
+
+Scrapes an ethical demo e-commerce site, cleans product data, and inserts new rows into the `sales` table.
+
+```json
+{
+  "source": "https://webscraper.io/test-sites/e-commerce/allinone",
+  "inserted": 3,
+  "skipped": 0,
+  "total_found": 3
+}
+```
+
 ## Tests
 
 ```powershell

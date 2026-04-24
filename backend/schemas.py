@@ -24,3 +24,10 @@ class AskResponse(BaseModel):
 
 class HealthResponse(BaseModel):
     status: str
+
+
+class IngestionResponse(BaseModel):
+    source: str
+    inserted: int
+    skipped: int
+    total_found: int

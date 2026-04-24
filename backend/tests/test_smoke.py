@@ -5,6 +5,7 @@ import main
 from errors import QueryExecutionError
 from scripts.seed_db import seed
 from services.query_service import run_query
+from services.scraper_service import ScrapedProduct
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -66,3 +67,22 @@ def test_run_query_accepts_select() -> None:
 def test_run_query_blocks_unsafe_sql(sql: str) -> None:
     with pytest.raises(QueryExecutionError):
         run_query(sql)
+
+
+def test_scrape_demo_ingests_products(monkeypatch: pytest.MonkeyPatch) -> None:
+    client = TestClient(main.app)
+
+    monkeypatch.setattr(
+        "services.scraper_service.fetch_demo_products",
+        lambda: [
+            ScrapedProduct(name="Portfolio Product A", category="Scraped Demo", price=19.99),
+            ScrapedProduct(name="Portfolio Product B", category="Scraped Demo", price=29.99),
+        ],
+    )
+
+    response = client.post("/ingestion/scrape-demo")
+
+    assert response.status_code == 200
+    payload = response.json()
+    assert payload["inserted"] >= 0
+    assert payload["total_found"] == 2
